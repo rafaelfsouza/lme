@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Impacto\Lme\LmeRepository;
 
 class FrontController extends Controller
@@ -16,6 +17,48 @@ class FrontController extends Controller
     public function __construct(LmeRepository $lmeRepository)
     {
         $this->lmeRepository = $lmeRepository;
+    }
+
+    public function index(Request $request, $metal){
+
+        switch ($metal){
+            case 'cobre': $metal = 'valor_copper'; break;
+            case 'zinco': $metal = 'valor_zinc'; break;
+            case 'aluminio': $metal = 'valor_aluminium'; break;
+            case 'chumbo': $metal = 'valor_lead'; break;
+            case 'estanho': $metal = 'valor_tin'; break;
+            case 'niquel': $metal = 'valor_nickel'; break;
+            case 'dolar': $metal = 'valor_dolar'; break;
+        }
+
+        if(isset($request->periodo)){
+            $data = explode('-', $request->periodo);
+            $mes = $data[0];
+            $ano = $data[1];
+        }else{
+            $mes = date('m');
+            $ano = date('Y');
+        }
+
+        if($request->indicador == 'metal'){
+            $listagem = $this->lmeRepository->indicadoresMetal($metal, $mes, $ano);
+            $indicadoresMetal = [];
+
+            foreach($listagem as $row){
+                if($row->valor != 'feriado') {
+                    $indicadoresMetal[$row->data] = $row->valor;
+                }
+            }
+
+            return $indicadoresMetal;
+
+        }else{
+            $indicadores = $this->lmeRepository->indicadores($mes, $ano);
+
+            return $indicadores;
+
+        }
+
     }
 
 // leitura lme

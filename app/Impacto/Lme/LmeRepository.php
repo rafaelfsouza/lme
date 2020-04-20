@@ -44,4 +44,27 @@ class LmeRepository
         return $lme->delete();
     }
 
+    public function indicadoresMetal($metal, $mes, $ano){
+
+        $inicio = $ano.'-'.$mes.'-01';
+        $termino = date($ano.'-'.$mes.'-t');
+
+        return Lme::query()
+            ->selectRaw("data, $metal as valor")
+            ->whereBetween('data', [$inicio, $termino])
+            ->orderBy('data', 'asc')
+            ->get();
+    }
+
+    public function indicadores($mes, $ano){
+
+        $inicio = $ano.'-'.$mes.'-01';
+        $termino = date($ano.'-'.$mes.'-t');
+
+        return Lme::query()
+            ->whereBetween('data', [$inicio, $termino])
+            ->orderBy('data', 'desc')
+            ->get();
+    }
+
 }
