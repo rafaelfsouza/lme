@@ -1,0 +1,64 @@
+body{
+    background-color: #f5f5f5;
+}
+
+.loader {
+    height: 4px;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+    background-color: #ddd;
+    z-index: 99;
+}
+.loader:before{
+    display: block;
+    position: absolute;
+    content: "";
+    left: -200px;
+    width: 200px;
+    height: 4px;
+    background-color: #4caf50;
+    animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+    from {left: -200px; width: 30%;}
+    50% {width: 30%;}
+    70% {width: 70%;}
+    80% { left: 50%;}
+    95% {left: 120%;}
+    to {left: 100%;}
+}
+
+.router-link-active {
+    @extend .active;
+}
+
+.nav-submenu{
+    background: #eeeeee;
+}
+
+.nav-submenu{
+    background: #eeeeee;
+    .nav-link.active, .nav-link.router-link-active, .show > .nav-link {
+        background-color: #bdbdbd;
+    }
+}
+
+.nav-pills .nav-link {
+    border-radius: 0;
+}
+
+.img-box {
+    width: auto;
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.box-busca-faq{
+    background-color: #1fc8db;
+    background-image: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+}
