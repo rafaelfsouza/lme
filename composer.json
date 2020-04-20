@@ -10,7 +10,6 @@
     "require": {
         "php": "^7.1.3",
         "bmatovu/multi-auth": "7.*",
-        "dannyben/php-quandl": "^0.5.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
