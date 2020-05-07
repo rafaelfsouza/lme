@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Impacto\Lme\LmeRepository;
 
 class FrontController extends Controller
@@ -170,46 +171,65 @@ class FrontController extends Controller
                     }
                 }
                 if(preg_match_all("#<td[^>]*>(.*?)</td>#is",$linha,$mat)){
-                    if($mat[1][0] == $dia){
-                        foreach($mat[1] as $key => $col) {
-                            $valores[$dados[$key]] = $col;
+                    if(strlen($mat[1][0]) == 6 && Str::contains($mat[1][0], '/')) {
+                        $registro = $this->lmeRepository->showByDate($mat[1][0]);
+
+                        unset($valores);
+
+                        if (!$registro) {
+                            foreach ($mat[1] as $key => $col) {
+                                $valores[$dados[$key]] = $col;
+                            }
+
+                            if($valores){
+
+                                $metais = [
+                                    "Cobre" => "valor_copper",
+                                    "Zinco" => "valor_zinc",
+                                    "Alumínio" => "valor_aluminium",
+                                    "Chumbo" => "valor_lead",
+                                    "Estanho" => "valor_tin",
+                                    "Níquel" => "valor_nickel",
+                                    "Dólar" => "valor_dolar"
+                                ];
+
+                                $dataArray = explode('/', $mat[1][0]);
+
+                                if(isset($dataArray[1])) {
+                                    $mes = $this->lmeRepository->mes($dataArray[1]);
+                                    if($mes) {
+                                        $data2 = date('Y') . '-' . $mes . '-' . $dataArray[0];
+                                        $dia = Carbon::createFromFormat('Y-M-d', $data2);
+                                    }
+                                } else {
+                                    continue;
+                                }
+
+                                $data['data'] = $dia->format('d/m/Y');
+                                $data['semana'] = $dia->format('W');
+
+                                foreach($valores as $metal => $valor){
+                                    if(isset($metais[$metal])) {
+                                        if($metais[$metal] != 'valor_dolar') {
+                                            $data[$metais[$metal]] = str_replace(',', '', $valor);
+                                        }else {
+                                            $data[$metais[$metal]] = str_replace(',', '.', $valor);
+                                        }
+                                    }
+
+                                }
+
+                                $this->lmeRepository->store($data);
+
+                            }
+
                         }
                     }
                 }
             }
         }
 
-        if($valores){
-
-            $metais = [
-                "Cobre" => "valor_copper",
-                "Zinco" => "valor_zinc",
-                "Alumínio" => "valor_aluminium",
-                "Chumbo" => "valor_lead",
-                "Estanho" => "valor_tin",
-                "Níquel" => "valor_nickel",
-                "Dólar" => "valor_dolar"
-            ];
-
-            $dia = now();
-            $data['data'] = $dia->format('d/m/Y');
-            $data['semana'] = $dia->format('W');
-
-            foreach($valores as $metal => $valor){
-                if(isset($metais[$metal])) {
-                    if($metais[$metal] != 'valor_dolar') {
-                        $data[$metais[$metal]] = str_replace(',', '', $valor);
-                    }else {
-                        $data[$metais[$metal]] = str_replace(',', '.', $valor);
-                    }
-                }
-            }
-
-            $this->lmeRepository->store($data);
-
-            dd('ok');
-
-        }
+        dd('ok');
 
     }
 
