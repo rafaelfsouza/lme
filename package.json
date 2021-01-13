@@ -20,7 +20,7 @@
         "jquery": "^3.2",
         "jquery-slugify": "^1.2.5",
         "jquery-ui": "^1.12.1",
-        "jquery-validation": "^1.17.0",
+        "jquery-validation": "^1.19.3",
         "laravel-mix": "^4.0.7",
         "lodash": "^4.17.5",
         "popper.js": "^1.12",
